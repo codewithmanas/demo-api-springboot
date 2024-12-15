@@ -26,7 +26,8 @@ public class TodoController {
     @PostMapping("/todos")
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
 
-        System.out.println("Received Todo: " + todo.getTitle() + ", Completed: " + todo.isCompleted());
+        // Add the new todo to the list or database
+        todos.add(todo);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
