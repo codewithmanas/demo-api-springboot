@@ -51,4 +51,11 @@ public class TodoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping(value = "/todos", params = "status")
+    public ResponseEntity getTodosByStatus(@RequestParam String status) {
+        System.out.println("Status: " + status);
+
+            return ResponseEntity.ok("Got the status");
+    }
+
 }
