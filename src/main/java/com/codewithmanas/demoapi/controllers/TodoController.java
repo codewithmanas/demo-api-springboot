@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -52,10 +53,23 @@ public class TodoController {
     }
 
     @GetMapping(value = "/todos", params = "status")
-    public ResponseEntity getTodosByStatus(@RequestParam String status) {
-        System.out.println("Status: " + status);
+    public ResponseEntity<List<Todo>> getTodosByStatus(@RequestParam String status) {
+            List<Todo> result;
 
-            return ResponseEntity.ok("Got the status");
+            if("completed".equalsIgnoreCase(status)) {
+                result = todos.stream()
+                        .filter(Todo::isCompleted)
+                        .collect(Collectors.toList());
+            } else if("incomplete".equalsIgnoreCase(status)) {
+                result = todos.stream()
+                        .filter(todo -> !todo.isCompleted())
+                        .collect(Collectors.toList());
+            } else {
+                result = todos;
+            }
+
+            return ResponseEntity.ok(result);
+
     }
 
 }
