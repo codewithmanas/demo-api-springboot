@@ -2,10 +2,26 @@ package com.codewithmanas.demoapi.entities;
 
 public class Todo {
 
+    private Long id;
     private String title;
     private boolean completed;
 
+    // Constructor
+    public Todo(Long id, String title, boolean completed) {
+        this.id = id;
+        this.title =  title;
+        this.completed = completed;
+    }
+
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
