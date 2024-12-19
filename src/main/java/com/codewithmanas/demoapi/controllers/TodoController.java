@@ -24,6 +24,7 @@ public class TodoController {
         todos.add(new Todo(3L, "Clean the house", false));
     }
 
+    // Method to Create Todo
     @PostMapping("/todos")
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
 
@@ -36,11 +37,13 @@ public class TodoController {
     }
 
 
+    // Method to Get All Todos
     @GetMapping("/todos")
     public ResponseEntity<List<Todo>> getAllTodos() {
         return ResponseEntity.ok(todos);
     }
 
+    // Fetch a Single Todo by ID
     @GetMapping("/todos/{id}")
     public ResponseEntity<Todo> getTodoById(@PathVariable int id) {
         System.out.println("Todo Id: " + id);
@@ -52,6 +55,7 @@ public class TodoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Fetch Todos by Completed Status
     @GetMapping(value = "/todos", params = "status")
     public ResponseEntity<List<Todo>> getTodosByStatus(@RequestParam String status) {
             List<Todo> result;
@@ -70,6 +74,36 @@ public class TodoController {
 
             return ResponseEntity.ok(result);
 
+    }
+
+    // Update an existing Todo
+    @PutMapping("/todos/{id}")
+    public ResponseEntity<Todo> updateTodo(@PathVariable int id) {
+
+
+        return todos.stream()
+                .filter(todo -> todo.getId() == id)
+                .findFirst()
+                .map(todo -> {
+                    todo.setCompleted(true);
+                    return ResponseEntity.ok(todo);
+                })
+                .orElse(ResponseEntity.notFound().build());
+
+    }
+
+    // Delete an existing Todo
+    @DeleteMapping("/todos/{id}")
+    public ResponseEntity<String> deleteTodo(@PathVariable int id) {
+
+        return todos.stream()
+                .filter(todo -> todo.getId() == id)
+                .findFirst()
+                .map(todo -> {
+                    todos.remove(todo);
+                    return ResponseEntity.ok("Deleted");
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
