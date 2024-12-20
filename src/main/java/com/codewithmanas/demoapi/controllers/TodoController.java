@@ -1,30 +1,27 @@
 package com.codewithmanas.demoapi.controllers;
 
 import com.codewithmanas.demoapi.entities.Todo;
-import com.codewithmanas.demoapi.repositories.TodoRepository;
+import com.codewithmanas.demoapi.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api/v1")
 public class TodoController {
 
     @Autowired
-    private TodoRepository todoRepository;
+    private TodoService todoService;
 
     // Method to Create Todo
     @PostMapping("/todos")
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
 
         // Add the new todo to the list or database
-        Todo savedTodo = todoRepository.save(todo);
+        Todo savedTodo = todoService.createTodo(todo);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -35,35 +32,28 @@ public class TodoController {
     // Method to Get All Todos
     @GetMapping("/todos")
     public ResponseEntity<List<Todo>> getAllTodos() {
-        return ResponseEntity.ok(todoRepository.findAll());
+        List<Todo> todos = todoService.getAllTodos();
+        return ResponseEntity.ok(todos);
     }
 
     // Fetch a Single Todo by ID
     @GetMapping("/todos/{id}")
     public ResponseEntity<Todo> getTodoById(@PathVariable Integer id) {
+        Todo todo = todoService.getTodoById(id);
 
-        return todoRepository.findById(id)
-                .map(todo -> ResponseEntity.ok(todo))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(todo);
     }
 
     // Fetch Todos by Completed Status
     @GetMapping(value = "/todos", params = "status")
     public ResponseEntity<List<Todo>> getTodosByStatus(@RequestParam String status) {
 
-        boolean completed;
-
-        if("completed".equalsIgnoreCase(status)) {
-            completed = true;
-        } else if ("incomplete".equalsIgnoreCase(status)) {
-            completed = false;
-        } else {
+        if(!(status.equals("completed") || status.equals("incomplete"))) {
             // Invalid status, return bad request
             return ResponseEntity.badRequest().body(null);
         }
 
-        // Call the repository method to fetch the Todos
-        List<Todo> todos = todoRepository.findByCompleted(completed);
+        List<Todo> todos = todoService.getTodosByStatus(status);
 
         return ResponseEntity.ok(todos);
 
@@ -71,17 +61,20 @@ public class TodoController {
 
     // Update an existing Todo
     @PutMapping("/todos/{id}")
-    public ResponseEntity<String> updateTodoById(@PathVariable Integer id) {
-       return ResponseEntity.ok("We will implement later");
+    public ResponseEntity<Todo> updateTodoById(@PathVariable Integer id, @RequestBody Todo updatedTodo) {
+       Todo todo = todoService.updateTodoById(id, updatedTodo);
+
+       return ResponseEntity.ok(todo);
     }
 
     // Delete an existing Todo
     @DeleteMapping("/todos/{id}")
     public ResponseEntity<String> deleteTodoById(@PathVariable Integer id) {
 
-        if(todoRepository.existsById(id)) {
-            todoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+        boolean isDeleted = todoService.deleteTodoById(id);
+
+        if(isDeleted) {
+            return ResponseEntity.ok("Todo Deleted Successfully");
         } else {
             return ResponseEntity.notFound().build();
         }

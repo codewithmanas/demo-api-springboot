@@ -15,6 +15,8 @@ public class Todo {
     private boolean completed;
 
     // No-argument constructor required by Hibernate
+    // Hibernate needs to create instances of your `Todo` entity when querying the database (e.g., when fetching data, updating entities, etc.).
+    //  For this, Hibernate relies on a default constructor (a constructor with no parameters) to instantiate the entity before it populates its fields.
     public Todo() {
     }
 
