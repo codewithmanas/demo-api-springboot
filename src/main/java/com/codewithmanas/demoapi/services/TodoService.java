@@ -1,5 +1,6 @@
 package com.codewithmanas.demoapi.services;
 
+import com.codewithmanas.demoapi.dtos.UpdateTodoStatusDto;
 import com.codewithmanas.demoapi.entities.Todo;
 import com.codewithmanas.demoapi.repositories.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,19 @@ public class TodoService {
     public Todo updateTodoById(Integer id, Todo updatedTodo) {
         return todoRepository.findById(id)
                 .map(existingTodo -> {
-                    existingTodo.setTitle(updatedTodo.getTitle());
+                     existingTodo.setTitle(updatedTodo.getTitle());
                     existingTodo.setCompleted(updatedTodo.isCompleted());
+                    Todo savedTodo = todoRepository.save(existingTodo);
+                    return savedTodo;
+                }).orElse(null);
+    }
+
+    // Update Todo Status by ID
+    public Todo updateTodoStatusById(Integer id, UpdateTodoStatusDto updateTodoStatusDto) {
+        return todoRepository.findById(id)
+                .map(existingTodo -> {
+                    // Only update the completed status
+                    existingTodo.setCompleted(updateTodoStatusDto.isCompleted());
                     Todo savedTodo = todoRepository.save(existingTodo);
                     return savedTodo;
                 }).orElse(null);

@@ -1,5 +1,6 @@
 package com.codewithmanas.demoapi.controllers;
 
+import com.codewithmanas.demoapi.dtos.UpdateTodoStatusDto;
 import com.codewithmanas.demoapi.entities.Todo;
 import com.codewithmanas.demoapi.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,14 @@ public class TodoController {
        Todo todo = todoService.updateTodoById(id, updatedTodo);
 
        return ResponseEntity.ok(todo);
+    }
+
+    // Update Completed Status of existing Todo
+    @PutMapping("/todos/{id}/status")
+    public ResponseEntity<Todo> updateTodoStatusById(@PathVariable Integer id, @RequestBody UpdateTodoStatusDto updateTodoStatusDto) {
+        Todo todo = todoService.updateTodoStatusById(id, updateTodoStatusDto);
+
+        return ResponseEntity.ok(todo);
     }
 
     // Delete an existing Todo
