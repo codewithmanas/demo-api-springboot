@@ -17,6 +17,9 @@ public class TodoService {
 
     // Create a new todo
     public Todo createTodo(Todo todo) {
+        if (todo.getTitle() == null || todo.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("Todo title cannot be null or empty");
+        }
         return todoRepository.save(todo);
     }
 

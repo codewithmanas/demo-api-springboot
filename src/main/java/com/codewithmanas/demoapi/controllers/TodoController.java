@@ -2,6 +2,8 @@ package com.codewithmanas.demoapi.controllers;
 
 import com.codewithmanas.demoapi.dtos.UpdateTodoStatusDto;
 import com.codewithmanas.demoapi.entities.Todo;
+import com.codewithmanas.demoapi.exceptions.CustomBadRequestException;
+import com.codewithmanas.demoapi.exceptions.CustomInternalServerException;
 import com.codewithmanas.demoapi.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +23,20 @@ public class TodoController {
     @PostMapping("/todos")
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
 
-        // Add the new todo to the list or database
-        Todo savedTodo = todoService.createTodo(todo);
+        try {
+            // Add the new todo to the list or database
+            Todo savedTodo = todoService.createTodo(todo);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(savedTodo);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(savedTodo);
+
+        } catch (IllegalArgumentException e) {
+            throw new CustomBadRequestException("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            throw new CustomInternalServerException("Failed to create todo. Please try again later.");
+        }
+
     }
 
 
